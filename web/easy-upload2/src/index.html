@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>安全图片上传系统</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 0;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #4fc3f7;
+        }
+        
+        .description {
+            color: #e0f7fa;
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .panels {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .panel {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #4fc3f7;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(79, 195, 247, 0.3);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        input[type="file"], input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            color: white;
+            font-size: 1rem;
+        }
+        
+        button {
+            background: #0288d1;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #029ae5;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+        
+        .success {
+            color: #80deea;
+            border: 1px solid #80deea;
+        }
+        
+        .error {
+            color: #ff5252;
+            border: 1px solid #ff5252;
+        }
+        
+        .warning {
+            color: #ffb74d;
+            border: 1px solid #ffb74d;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            background: rgba(255, 183, 77, 0.1);
+        }
+        
+        .hint {
+            color: #e0f7fa;
+            font-style: italic;
+            margin-top: 10px;
+        }
+        
+        .file-list {
+            margin-top: 20px;
+        }
+        
+        .file-item {
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 5px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .file-name {
+            font-weight: 500;
+        }
+        
+        .file-size {
+            color: #b0bec5;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .panels {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>安全图片上传系统</h1>
+            <p class="description">
+                这是一个安全的图片上传平台，只允许上传图片文件（JPG、PNG、GIF）。所有上传的文件都经过严格验证。
+                上传成功后，您可以通过文件包含功能查看图片。
+            </p>
+        </header>
+        
+        <div class="panels">
+            <div class="panel">
+                <h2>上传图片</h2>
+                <form id="uploadForm" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="fileInput">选择图片文件 (JPG, PNG, GIF):</label>
+                        <input type="file" id="fileInput" name="file" accept=".jpg,.jpeg,.png,.gif" required>
+                    </div>
+                    <button type="submit">上传文件</button>
+                </form>
+                
+                <div class="warning">
+                    <strong>安全限制:</strong> 系统只允许上传图片文件，并且会对文件内容进行严格检查。
+                </div>
+                
+                <div id="uploadResult" class="result"></div>
+            </div>
+            
+            <div class="panel">
+                <h2>文件包含</h2>
+                <form id="includeForm">
+                    <div class="form-group">
+                        <label for="filePath">输入文件路径 (例如: uploads/picture.jpg):</label>
+                        <input type="text" id="filePath" name="file" placeholder="uploads/example.jpg" required>
+                    </div>
+                    <button type="submit">查看文件</button>
+                </form>
+                
+                <div class="warning">
+                    <strong>注意:</strong> 只能查看已上传的图片文件，不支持其他文件类型。
+                </div>
+                
+                <div id="includeResult" class="result"></div>
+            </div>
+        </div>
+        
+
+    <script>
+        // 上传表单处理
+        document.getElementById('uploadForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const resultDiv = document.getElementById('uploadResult');
+            
+            resultDiv.className = 'result';
+            resultDiv.innerHTML = '上传中...';
+            
+            fetch('upload.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                resultDiv.innerHTML = data;
+                resultDiv.classList.add('success');
+            })
+            .catch(error => {
+                resultDiv.innerHTML = '上传失败: ' + error;
+                resultDiv.classList.add('error');
+            });
+        });
+        
+document.getElementById('includeForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const file = document.getElementById('filePath').value.trim();
+    const resultDiv = document.getElementById('includeResult');
+
+    resultDiv.className = 'result';
+    resultDiv.innerHTML = '加载中...';
+
+    // 直接显示图片，不再 fetch 内容
+    const img = document.createElement('img');
+    img.src = 'include.php?file=' + encodeURIComponent(file);
+    img.alt = '加载的图片';
+
+    img.onload = () => {
+        resultDiv.innerHTML = '';
+        resultDiv.appendChild(img);
+        resultDiv.classList.add('success');
+    };
+
+    img.onerror = () => {
+        resultDiv.innerHTML = '加载失败: 图片无法显示';
+        resultDiv.classList.add('error');
+    };
+});
+
+    </script>
+</body>
+</html>

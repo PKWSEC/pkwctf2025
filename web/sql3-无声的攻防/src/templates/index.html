@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>小虎鲸厨师协会 - 会员验证系统 v3.0</title>
+    <style>
+        body { 
+            font-family: 'Arial Rounded MT Bold', 'Arial', sans-serif; 
+            max-width: 800px; 
+            margin: 0 auto; 
+            padding: 20px;
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+        }
+        .header {
+            text-align: center;
+            background: #2196f3;
+            color: white;
+            padding: 20px;
+            border-radius: 10px 10px 0 0;
+            margin-bottom: 0;
+        }
+        .container { 
+            background: white; 
+            padding: 25px; 
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .warning {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .security {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        input[type="text"] { 
+            width: 300px; 
+            padding: 10px; 
+            margin: 10px 0; 
+            border: 2px solid #2196f3;
+            border-radius: 5px;
+        }
+        input[type="submit"] { 
+            padding: 10px 20px; 
+            background: #2196f3; 
+            color: white; 
+            border: none; 
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        input[type="submit"]:hover {
+            background: #1976d2;
+        }
+        .message { 
+            padding: 15px; 
+            margin: 15px 0; 
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .success { 
+            background: #e8f5e9; 
+            border-left: 4px solid #4caf50;
+            color: #2e7d32;
+        }
+        .error { 
+            background: #ffebee; 
+            border-left: 4px solid #f44336;
+            color: #c62828;
+        }
+        .hint {
+            font-size: 14px;
+            color: #666;
+            font-style: italic;
+            margin-top: 20px;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 5px;
+        }
+        .technique {
+            background: #f3e5f5;
+            border-left: 4px solid #9c27b0;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🐋 小虎鲸厨师协会 🍳</h1>
+        <h2>会员验证系统 v3.0</h2>
+    </div>
+    
+    <div class="container">
+        <div class="warning">
+            <strong>⚠️ 系统重大升级：</strong>
+            机器猫学长(Doraemon)彻底重构了系统！现在查询只返回"用户存在"或"用户不存在"，不再显示任何具体数据。
+        </div>
+
+        <div class="security">
+            <strong>🔒 全新安全机制：</strong>
+            "这次绝对安全了！"机器猫学长得意地说，"没有数据回显，看他们还怎么注入！"
+        </div>
+
+        <form method="POST">
+            <h3>🔍 验证会员存在性：</h3>
+            <input type="text" name="username" placeholder="输入会员姓名进行验证" value="{{ search_term }}">
+            <input type="submit" value="验证">
+        </form>
+        
+        {% if error %}
+            <div class="message error">{{ error }}</div>
+        {% endif %}
+        
+        {% if message %}
+            <div class="message {% if '存在' in message %}success{% else %}error{% endif %}">
+                {{ message }}
+            </div>
+        {% endif %}
+        
+        <div class="hint">
+            <strong>🎯 挑战目标：</strong><br>
+            小栗子学姐(Chestnut)的星辰布丁食谱密码仍然藏在数据库中！<br>
+            你需要通过布尔盲注技术，在只有"用户存在"/"用户不存在"响应的情况下，逐字符猜解出她的密码。<br><br>
+
+            <strong>🔧 技术提示：</strong>
+            <ul>
+                <li>使用 <code>substr(password,1,1)</code> 猜解第一个字符</li>
+                <li>使用 <code>length(password)</code> 猜解密码长度</li>
+                <li>通过响应差异推断每个字符的值</li>
+                <li>你需要编写脚本自动化这个过程</li>
+            </ul>
+
+        </div>
+    </div>
+</body>
+</html>

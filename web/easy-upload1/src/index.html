@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHP文件上传挑战</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 30px;
+            margin-top: 30px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #ff9966;
+            font-size: 2.5rem;
+        }
+        
+        .description {
+            text-align: center;
+            margin-bottom: 30px;
+            line-height: 1.6;
+            color: #ccc;
+        }
+        
+        .upload-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .upload-box {
+            width: 100%;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .upload-box:hover {
+            border-color: #ff9966;
+            background: rgba(255, 153, 102, 0.05);
+        }
+        
+        .upload-box i {
+            font-size: 50px;
+            margin-bottom: 15px;
+            color: #ff9966;
+        }
+        
+        .upload-box p {
+            margin: 10px 0;
+            color: #aaa;
+        }
+        
+        .upload-box input {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+        
+        .btn {
+            background: #ff9966;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .btn:hover {
+            background: #ff7a3d;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 153, 102, 0.4);
+        }
+        
+        .rules {
+            margin-top: 30px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        
+        .rules h2 {
+            color: #ff9966;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .rules ul {
+            list-style-type: none;
+            padding-left: 20px;
+        }
+        
+        .rules li {
+            margin-bottom: 10px;
+            color: #ccc;
+            position: relative;
+            padding-left: 25px;
+        }
+        
+        .rules li:before {
+            content: "•";
+            color: #ff9966;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+            font-size: 20px;
+        }
+        
+        .message {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+        }
+        
+        .success {
+            background: rgba(46, 204, 113, 0.2);
+            border: 1px solid #2ecc71;
+            color: #2ecc71;
+        }
+        
+        .error {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid #e74c3c;
+            color: #e74c3c;
+        }
+        
+        .hint {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 153, 102, 0.1);
+            border-left: 4px solid #ff9966;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #ccc;
+        }
+        
+        .filename-display {
+            margin-top: 15px;
+            font-style: italic;
+            color: #aaa;
+            word-break: break-all;
+        }
+        
+        .result-box {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            border-left: 4px solid #ff9966;
+            display: none;
+        }
+        
+        .result-box h3 {
+            color: #ff9966;
+            margin-bottom: 10px;
+        }
+        
+        .result-link {
+            color: #4ecdc4;
+            word-break: break-all;
+            display: block;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>PHP文件上传挑战</h1>
+    <p class="description">尝试上传一个PHP文件以获取服务器上的flag</p>
+    
+    <div class="container">
+        <div class="upload-container">
+            <div class="upload-box" id="dropZone">
+                <i>📁</i>
+                <h3>拖放文件到此处</h3>
+                <p>或</p>
+                <p>点击选择文件</p>
+                <input type="file" id="fileInput" name="file">
+                <div class="filename-display" id="filename"></div>
+            </div>
+            
+            <button class="btn" id="uploadBtn">上传文件</button>
+            
+            <div class="message" id="message"></div>
+            
+            <div class="result-box" id="resultBox">
+                <h3>上传成功！</h3>
+                <p>文件已保存到：</p>
+                <a href="#" class="result-link" id="fileLink" target="_blank"></a>
+            </div>
+            
+            <div class="hint">
+                <strong>提示：</strong> 只允许上传图片文件
+            </div>
+        </div>
+        
+        <div class="rules">
+            <h2>挑战规则</h2>
+            <ul>
+                <li>前端只允许上传图像文件（jpg, jpeg, png, gif）</li>
+                <li>文件大小不能超过 2MB</li>
+                <li>尝试上传PHP文件以获取flag</li>
+                <li>上传后的文件存储在服务器上的upload目录中</li>
+                <li>服务器端不做任何文件类型检查</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.getElementById('fileInput');
+            const dropZone = document.getElementById('dropZone');
+            const uploadBtn = document.getElementById('uploadBtn');
+            const message = document.getElementById('message');
+            const filenameDisplay = document.getElementById('filename');
+            const resultBox = document.getElementById('resultBox');
+            const fileLink = document.getElementById('fileLink');
+            
+            // 允许的文件类型（白名单）
+            const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+            
+            // 拖放功能
+            dropZone.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.style.borderColor = '#ff9966';
+                this.style.backgroundColor = 'rgba(255, 153, 102, 0.1)';
+            });
+            
+            dropZone.addEventListener('dragleave', function() {
+                this.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+                this.style.backgroundColor = 'transparent';
+            });
+            
+            dropZone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+                this.style.backgroundColor = 'transparent';
+                
+                if (e.dataTransfer.files.length) {
+                    fileInput.files = e.dataTransfer.files;
+                    updateFilename();
+                }
+            });
+            
+            fileInput.addEventListener('change', updateFilename);
+            
+            function updateFilename() {
+                if (fileInput.files.length) {
+                    filenameDisplay.textContent = `已选择: ${fileInput.files[0].name}`;
+                } else {
+                    filenameDisplay.textContent = '';
+                }
+            }
+            
+            // 上传功能
+            uploadBtn.addEventListener('click', function() {
+                if (!fileInput.files.length) {
+                    showMessage('请先选择一个文件', 'error');
+                    return;
+                }
+                
+                const file = fileInput.files[0];
+                const filename = file.name;
+                const extension = filename.split('.').pop().toLowerCase();
+                
+                // 前端白名单校验
+                if (!allowedExtensions.includes(extension)) {
+                    showMessage('只允许上传jpg, jpeg, png, gif格式的文件', 'error');
+                    return;
+                }
+                
+                // 文件大小检查
+                if (file.size > 2 * 1024 * 1024) {
+                    showMessage('文件大小不能超过2MB', 'error');
+                    return;
+                }
+                
+                // 创建FormData并上传
+                const formData = new FormData();
+                formData.append('file', file);
+                
+                fetch('upload.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.text())
+                .then(data => {
+                    if (data.startsWith('upload/')) {
+                        // 上传成功，显示文件路径
+                        fileLink.href = data;
+                        fileLink.textContent = data;
+                        resultBox.style.display = 'block';
+                        showMessage('文件上传成功！', 'success');
+                    } else {
+                        showMessage(data, 'error');
+                    }
+                })
+                .catch(error => {
+                    showMessage('上传出错: ' + error, 'error');
+                });
+            });
+            
+            function showMessage(text, type) {
+                message.textContent = text;
+                message.className = 'message ' + type;
+                message.style.display = 'block';
+                
+                // 5秒后隐藏消息
+                setTimeout(() => {
+                    message.style.display = 'none';
+                }, 5000);
+            }
+        });
+    </script>
+</body>
+</html>

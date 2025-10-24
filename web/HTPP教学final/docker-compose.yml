@@ -1,0 +1,9 @@
+version: "3"
+services:
+  challenge:
+    build: .
+    image: ctfhub/web_nginx_php_7.4_test
+    ports:
+      - "10800:80"
+    environment:
+      - GZCTF_FLAG=ctfhub{test_flag}

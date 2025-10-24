@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>小虎鲸厨师协会 - 会员系统 v2.0</title>
+    <style>
+        body { 
+            font-family: 'Arial Rounded MT Bold', 'Arial', sans-serif; 
+            max-width: 800px; 
+            margin: 0 auto; 
+            padding: 20px;
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+        }
+        .header {
+            text-align: center;
+            background: #2196f3;
+            color: white;
+            padding: 20px;
+            border-radius: 10px 10px 0 0;
+            margin-bottom: 0;
+        }
+        .container { 
+            background: white; 
+            padding: 25px; 
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .warning {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .security {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        input[type="text"] { 
+            width: 300px; 
+            padding: 10px; 
+            margin: 10px 0; 
+            border: 2px solid #2196f3;
+            border-radius: 5px;
+        }
+        input[type="submit"] { 
+            padding: 10px 20px; 
+            background: #2196f3; 
+            color: white; 
+            border: none; 
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        input[type="submit"]:hover {
+            background: #1976d2;
+        }
+        .user { 
+            background: #f5f5f5; 
+            padding: 15px; 
+            margin: 10px 0; 
+            border-radius: 8px;
+            border-left: 4px solid #4caf50;
+        }
+        .admin-user {
+            border-left-color: #ff9800;
+            background: #fff8e1;
+        }
+        .error { color: #f44336; font-weight: bold; }
+        .success { color: #4caf50; }
+        .hint {
+            font-size: 14px;
+            color: #666;
+            font-style: italic;
+            margin-top: 20px;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 5px;
+        }
+        .filter-info {
+            font-size: 12px;
+            color: #888;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🐋 小虎鲸厨师协会 🍳</h1>
+        <h2>会员信息查询系统 v2.0</h2>
+    </div>
+    
+    <div class="container">
+        <div class="warning">
+            <strong>⚠️ 安全提醒：</strong>
+            最近发现有人试图攻击本系统窃取小栗子学姐(Chestnut)的"星辰布丁"食谱！
+            机器猫学长(Doraemon)已经紧急增加了安全过滤措施。
+        </div>
+
+        <div class="security">
+            <strong>🔒 系统升级公告：</strong>
+            为了增强系统安全性，我们已经部署了基础的安全过滤机制。
+            但机器猫学长工作到很晚，可能有些地方考虑不够周全...
+        </div>
+
+        <form method="POST">
+            <h3>🔍 搜索协会会员：</h3>
+            <input type="text" name="username" placeholder="输入会员姓名" value="{{ search_term }}">
+            <input type="submit" value="搜索">
+            {% if filtered_input %}
+                <div class="filter-info">{{ filtered_input }}</div>
+            {% endif %}
+            {% if security_note %}
+                <div class="filter-info">{{ security_note }}</div>
+            {% endif %}
+        </form>
+        
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+        
+        {% if users %}
+            <h3>搜索结果:</h3>
+            {% for user in users %}
+                <div class="user {% if user[4] %}admin-user{% endif %}">
+                    <strong>ID:</strong> {{ user[0] }}<br>
+                    <strong>姓名:</strong> 
+                    {% if user[1] == 'Doraemon' %}机器猫学长 (Doraemon)
+                    {% elif user[1] == 'Lion' %}狮子学长 (Lion)
+                    {% elif user[1] == 'SillyBird' %}呆呆鸟学长 (SillyBird)
+                    {% elif user[1] == 'Chestnut' %}小栗子学姐 (Chestnut)
+                    {% elif user[1] == 'LittleWhale' %}小虎鲸 (LittleWhale)
+                    {% else %}{{ user[1] }}{% endif %}<br>
+                    <strong>邮箱:</strong> {{ user[3] }}<br>
+                    <strong>职位:</strong> {% if user[4] %}👑 管理员{% else %}👨‍🍳 会员{% endif %}
+                </div>
+            {% endfor %}
+        {% elif request.method == 'POST' and not error %}
+            <p>❌ 未找到该会员</p>
+        {% endif %}
+        
+        <div class="hint">
+            💡 进阶提示：机器猫学长的安全过滤可能不够完善...
+        </div>
+    </div>
+</body>
+</html>

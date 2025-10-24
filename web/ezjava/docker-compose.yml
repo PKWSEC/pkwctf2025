@@ -1,0 +1,9 @@
+version: "2"
+services:
+  web:
+    build: .
+    image: ctf1:latest
+    container_name: ctf1
+    ports:
+      - "8833:8081"   # 宿主机 8833 -> 容器 8081
+    restart: unless-stopped
